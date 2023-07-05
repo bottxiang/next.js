@@ -40,15 +40,17 @@ createNextDescribe(
     // there's no good signal on the client end for when it happens. So we just
     // fetch multiple times waiting for it to happen.
     async function getTillCancelled(url: string) {
+      let json: CancelState
       for (let i = 0; i < 500; i++) {
         const res = await next.fetch(url)
-        const json = (await res.json()) as CancelState
+        json = (await res.json()) as CancelState
         if (json.streamCleanedUp && json.requestAborted) {
-          return json
+          break
         }
 
         await sleep(10)
       }
+      return json!
     }
 
     it('Midddleware cancels inner ReadableStream', async () => {
