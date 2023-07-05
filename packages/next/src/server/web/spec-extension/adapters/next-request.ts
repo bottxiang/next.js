@@ -14,6 +14,9 @@ export function signalFromNodeRequest(request: IncomingMessage) {
   request.on('error', (e) => {
     controller.abort(e)
   })
+  request.on('close', () => {
+    controller.abort()
+  })
   return controller.signal
 }
 
